@@ -1,39 +1,44 @@
 <html>
     <head>
-        <meta charset="utf=8">
+        <meta charset="utf-8">
         <title>
-            game
+            Bouncy ball
         </title>
         <style>
-            * {padding: 0;margin: 0;}
-            canvas {background: #eee;display: block;margin: 0 auto ;}
+            /* *{padding: 0;margin: 0;} */
+            canvas {background: rgb(255, 255, 255);display: block;margin: 0 ;}
         </style>
     </head>
-    <body>
-        <canvas id='Cvs' width="480" height="320"></canvas>
+    <body bgcolor = rgb(77,77,77)>
+        <canvas id='Cvs' width="600" height="300"></canvas>
+        튀는 공 2021 <a href="https://github.com/AntarcBall">깉헙</a>
         <script>
             var canvas = document.getElementById('Cvs');
             var ctx = canvas.getContext('2d');
-
             var x = 0;
-            var y = 150;
+            var y = Math.random()*canvas.height * 0.8;
             let dx = 3
             let dy = 0
+            let radius = 20 + Math.ceil(Math.random()*30);
+            let color_list = ['#FFBF00','#0101DF','#01DF74','#FA58AC','#FF0000','#2EFE2E']
+            ctx.fillStyle = color_list[Math.ceil(Math.random()*color_list.length)]
             function draw(){
                 ctx.clearRect(0,0,canvas.width,canvas.height)
                 ctx.beginPath();
-                ctx.fillStyle = "#0095DD"
-                ctx.arc(x,y,30,0,Math.PI*2);
+                ctx.arc(x,y,radius,0,Math.PI*2);
                 ctx.fill()
                 ctx.closePath()
-                if (y > canvas.height){
-                    dy = dy * -0.6
-                }
                 x += dx
                 y += dy
-                dx = dx * 0.999
+                if (y + radius > canvas.height){
+                    dy = dy * -0.8
+                    y = canvas.height- radius
+                }
+                dx = dx * 0.998
                 dy += 0.1
-                
+                if (x > canvas.width){
+                    x = 0;
+                }
             }
             setInterval(draw,10);
         </script>
