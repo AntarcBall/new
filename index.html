@@ -1,46 +1,69 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>
-            Bouncy ball
-        </title>
-        <style>
-            /* *{padding: 0;margin: 0;} */
-            canvas {background: rgb(255, 255, 255);display: block;margin: 0 ;}
-        </style>
-    </head>
-    <body bgcolor = rgb(77,77,77)>
-        <canvas id='Cvs' width="600" height="300"></canvas>
-        튀는 공 2021 <a href="https://github.com/AntarcBall">깉헙</a>
-        <script>
-            var canvas = document.getElementById('Cvs');
-            var ctx = canvas.getContext('2d');
-            var x = 0;
-            var y = Math.random()*canvas.height * 0.8;
-            let dx = 3
-            let dy = 0
-            let radius = 20 + Math.ceil(Math.random()*30);
-            let color_list = ['#FFBF00','#0101DF','#01DF74','#FA58AC','#FF0000','#2EFE2E']
-            ctx.fillStyle = color_list[Math.ceil(Math.random()*color_list.length)]
-            function draw(){
-                ctx.clearRect(0,0,canvas.width,canvas.height)
-                ctx.beginPath();
-                ctx.arc(x,y,radius,0,Math.PI*2);
-                ctx.fill()
-                ctx.closePath()
-                x += dx
-                y += dy
-                if (y + radius > canvas.height){
-                    dy = dy * -0.8
-                    y = canvas.height- radius
-                }
-                dx = dx * 0.998
-                dy += 0.1
-                if (x > canvas.width){
-                    x = 0;
-                }
-            }
-            setInterval(draw,10);
-        </script>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        canvas {background: rgb(209, 209, 209);display: block;} 
+    </style>
+</head>
+<body>
+    <canvas id='c' height="400" width="600"></canvas>   
+    <script>
+        
+const keys = {};
+document.addEventListener('keydown', e => {
+    keys[e.key] = true;
+})
+document.addEventListener('keyup', e => {
+    if(keys[e.key]) delete keys[e.key];
+})
+const size = 45;
+const velocity = 2
+let cvs = document.getElementById('c')
+let pt = cvs.getContext('2d');
+var x = cvs.width / 2  
+var y = cvs.height / 2
+var rock_x = []
+var rock_y = []
+var makerock= () => {
+    rock_x.push(Math.random()*cvs.width)
+    rock_y.push(0)
+}
+var i = 0;
+function entitymove_paint(what,number){
+    what.arc(rock_x[number],rock_y[number],30,0,Math.PI*2)
+}
+var game = 1
+var distance = (x1,y1,x2,y2) =>Math.sqrt( Math.pow(x2-x1,2) +Math.pow(y2-y1,2))
+function Loop(){
+    if(keys.a)x -= velocity;//조작 
+    if(keys.s) y += velocity;
+    if(keys.d) x += velocity;
+    if(keys.w) y -= velocity;
+    if(x<0) x = 0;//탈출방지 
+    if(y<0) y = 0;
+    if(x>cvs.width- size) x = cvs.width- size
+    if(y>cvs.height- size) y = cvs.height- size
+
+    pt.fillStyle = '#000000'
+    
+    pt.clearRect(0,0,cvs.width,cvs.height)
+    pt.beginPath();
+    pt.arc(x,y,size,0,Math.PI*2)
+    for (var i in rock_x){
+        rock_y[i] += 3
+        rock_x[i] += Math.random()*5 -2.5
+        if (distance(x,y,rock_x[i],rock_y[i])<30+size) game = 0
+        entitymove_paint(pt,i)
+        pt.closePath();
+    }
+    pt.fill()
+    if (game) requestAnimationFrame(Loop)
+}
+requestAnimationFrame(Loop)
+setInterval(makerock,1000)
+
+    </script>
+</body>
 </html>
