@@ -18,51 +18,73 @@ document.addEventListener('keydown', e => {
 document.addEventListener('keyup', e => {
     if(keys[e.key]) delete keys[e.key];
 })
-const size = 45;
-const velocity = 2
+const player_size = 15;
+const velocity = 4
 let cvs = document.getElementById('c')
 let pt = cvs.getContext('2d');
 var x = cvs.width / 2  
 var y = cvs.height / 2
 var rock_x = []
 var rock_y = []
-var makerock= () => {
+var rock_type = []
+var rock_velocity =[]
+let score = 0;
+const limit = 30
+const rock_size = 20
+
+var makerock= () => { //공 생성
+    score += 1
+    if( score >= limit) game = 0// 완료
     rock_x.push(Math.random()*cvs.width)
-    rock_y.push(0)
+    var type = Math.ceil( Math.random()*2)-1
+    rock_type.push(type)//2가지 타입
+    rock_y.push((type) *cvs.height)
+    rock_velocity.push(Math.ceil(Math.random()*4)+2)
+    
+    
 }
 var i = 0;
-function entitymove_paint(what,number){
-    what.arc(rock_x[number],rock_y[number],30,0,Math.PI*2)
+function entitymove_paint(what,number){  //돌_렌더링
+    what.arc(rock_x[number],rock_y[number],20,0,Math.PI*2)
 }
-var game = 1
+var game = true
 var distance = (x1,y1,x2,y2) =>Math.sqrt( Math.pow(x2-x1,2) +Math.pow(y2-y1,2))
 function Loop(){
+    
     if(keys.a)x -= velocity;//조작 
     if(keys.s) y += velocity;
     if(keys.d) x += velocity;
     if(keys.w) y -= velocity;
-    if(x<0) x = 0;//탈출방지 
-    if(y<0) y = 0;
-    if(x>cvs.width- size) x = cvs.width- size
-    if(y>cvs.height- size) y = cvs.height- size
-
+    if(x<player_size) x = player_size;//탈출방지 
+    if(y<player_size) y = player_size;
+    if(x>cvs.width- player_size) x = cvs.width- player_size
+    if(y>cvs.height- player_size) y = cvs.height- player_size
     pt.fillStyle = '#000000'
-    
     pt.clearRect(0,0,cvs.width,cvs.height)
     pt.beginPath();
-    pt.arc(x,y,size,0,Math.PI*2)
-    for (var i in rock_x){
-        rock_y[i] += 3
+    pt.arc(x,y,player_size,0,Math.PI*2)
+    pt.fill()
+    pt.fillStyle = '#01DFD7'
+    pt.fillRect(10,cvs.height-20,score/limit*(cvs.width-20),10)   //프로그레스바 
+    pt.closePath();
+    for (var i in rock_x){  //돌_이동
+        if (rock_type[i] == 0){
+            rock_y[i] += rock_velocity[i]
+        }else{
+            rock_y[i] -= rock_velocity[i]
+        }
         rock_x[i] += Math.random()*5 -2.5
-        if (distance(x,y,rock_x[i],rock_y[i])<30+size) game = 0
+        if (distance(x,y,rock_x[i],rock_y[i])<rock_size+player_size) game = false//판정
+        pt.fillStyle = '#FF0000'
+        pt.beginPath();
         entitymove_paint(pt,i)
+        pt.fill()
         pt.closePath();
     }
-    pt.fill()
     if (game) requestAnimationFrame(Loop)
 }
 requestAnimationFrame(Loop)
-setInterval(makerock,1000)
+setInterval(makerock,500)
 
     </script>
 </body>
