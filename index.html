@@ -1,14 +1,18 @@
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
     <style>
-        canvas {background: rgb(209, 209, 209);display: block;} 
+        canvas {background-image: url('https://lh3.googleusercontent.com/pw/ABLVV87jEyUH6mXIqD_2yaAaqhH3J_gxPaZRc3C_7s1-0OXiUORpCbhEqD5HD-UQoYryolhFXoOVa9iFxNMD-eO5Kb5NQmLVzXpfhcdbhZPO6Kq3F9cWURw2EPisQGwwoy0wgOHLyWh78O48NMeCE-qNzQrT=w561-h348-s-no-gm?authuser=0'); background-size: cover; display: block;} 
     </style>
 </head>
 <body>
     <canvas id='c' height="400" width="600"></canvas>   
+    <img id="rockImage" src="https://lh3.googleusercontent.com/pw/ABLVV86BX98nGc1DL10PNjLLyynezLaVG7VgcnNEYLfe9psSyu71GenJk3KP7lUrM61a45Pl06srCbYBmjkOc7rB0_5kWoQQ17hi84lMfT3Vl43ppkA3P2uUjwYFA9ka9arV1ZXrznBWykH-6h5JKpeonEKC=w258-h288-s-no-gm?authuser=0" style="display: none;">
     <script>
         
 const keys = {};
@@ -34,7 +38,10 @@ const rock_size = 20
 
 var makerock= () => { //공 생성
     score += 1
-    if( score >= limit) game = 0// 완료
+    if( score >= limit){
+        
+        game = 0// 완료
+    }    
     rock_x.push(Math.random()*cvs.width)
     var type = Math.ceil( Math.random()*2)-1
     rock_type.push(type)//2가지 타입
@@ -45,7 +52,8 @@ var makerock= () => { //공 생성
 }
 var i = 0;
 function entitymove_paint(what,number){  //돌_렌더링
-    what.arc(rock_x[number],rock_y[number],20,0,Math.PI*2)
+    var rockImage = document.getElementById('rockImage');
+    what.drawImage(rockImage, rock_x[number], rock_y[number], 40, 40);
 }
 var game = true
 var distance = (x1,y1,x2,y2) =>Math.sqrt( Math.pow(x2-x1,2) +Math.pow(y2-y1,2))
@@ -74,7 +82,9 @@ function Loop(){
             rock_y[i] -= rock_velocity[i]
         }
         rock_x[i] += Math.random()*5 -2.5
-        if (distance(x,y,rock_x[i],rock_y[i])<rock_size+player_size) game = false//판정
+        if (distance(x,y,rock_x[i],rock_y[i])<rock_size+player_size){
+            alert('이후 마감하도록 하겠습니다. 점심 시간에 밥 먹고 교무실로 와 달라고 전달 부탁합니다..')
+            game = false}//판정
         pt.fillStyle = '#FF0000'
         pt.beginPath();
         entitymove_paint(pt,i)
@@ -84,8 +94,12 @@ function Loop(){
     if (game) requestAnimationFrame(Loop)
 }
 requestAnimationFrame(Loop)
+
 setInterval(makerock,500)
 
     </script>
 </body>
 </html>
+```
+
+절대로 보보스의 전화를 받지마...
